@@ -1,0 +1,116 @@
+<!doctype html>
+<html class="no-js" lang="en">
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.6.3/dist/css/foundation.min.css"
+              integrity="sha256-ogmFxjqiTMnZhxCqVmcqTvjfe1Y/ec4WaRj/aQPvn+I=" crossorigin="anonymous">
+    </head>
+    <body>
+        <div  class="grid-container"> Search For Cities</div>
+
+        <form action="" method="get">
+            <div class="grid-container">
+                <input type="hidden" name="page" value="{{ cities.number }}">
+                <div class="input-group">
+                    <input class="input-group-field" type="text" name="search" value="{{ searched }}" placeholder="(name, postcode...)">
+                    <div class="input-group-button">
+                        <input type="submit" value="Submit">
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="grid-container">
+            <table class="hover">
+                <tr>
+                    <th>Ville</th>
+                    <th>Département</th>
+                    <th>Région</th>
+                    <th>Codes Postaux</th>
+                    <th>Population</th>
+                </tr>
+
+                {% for city in cities %}
+                <!-- Inline CSS :/ -->
+                <tr {% if city.population > 100000 %}  style="color: green"{% endif %}>
+                    <td>
+                        {{ city.name }}
+                    </td>
+                    <td>
+                        {% if city.department %}
+                        {{ city.department.name|default:"" }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if city.region %}
+                        {{ city.region.name|default:"" }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ city.postcodes }}
+                    </td>
+                    <td>
+                        {{ city.population|default:"" }}
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </table>
+
+            {% if cities.has_other_pages %}
+            <nav aria-label="Pagination">
+                <ul class="pagination">
+
+                    {% if cities.has_previous %}
+                    <li class="pagination-previous">
+                        <a href="?search={{ searched }}&page={{ cities.previous_page_number }}">Prev</a>
+                    </li>
+                    {% else %}
+                    <li class="pagination-previous disabled">Prev</li>
+                    {% endif %}
+
+                    {% if cities.number == 1 %}
+                        <li class="current">{{ 1 }}</li>
+                        {% else %}
+                        <li><a href="?search={{ searched }}&page=1"> 1</a></li>
+                        {% if cities.number|add:"-5" > 1 %}
+                        <li class="ellipsis" aria-hidden="true"></li>
+                        {% endif %}
+                    {% endif %}
+
+                    {% for i in cities.paginator.page_range %}
+                        {% if i != 1 and i > cities.number|add:"-5" and i < cities.number|add:"5" and i != cities.paginator.num_pages %}
+                            {% if cities.number == i %}
+                            <li class="current">{{ i }}</li>
+                            {% else %}
+                            <li>
+                                <a href="?search={{ searched }}&page={{ i }}"> {{ i }}</a>
+                            </li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if cities.number == cities.paginator.num_pages %}
+                        <li class="current">{{ cities.paginator.num_pages }}</li>
+                        {% else %}
+                        {% if cities.number|add:"5" < cities.paginator.num_pages %}
+                        <li class="ellipsis" aria-hidden="true"></li>
+                        {% endif %}
+                        <li>
+                            <a href="?search={{ searched }}&page={{ cities.paginator.num_pages }}"> {{ cities.paginator.num_pages }}</a>
+                        </li>
+                    {% endif %}
+
+                    {% if cities.has_next %}
+                        <li class="pagination-next"><a href="?search={{ searched }}&page={{ cities.next_page_number }}">Next</a>
+                        </li>
+                        {% else %}
+                        <li class="pagination-next disabled"><span>Next</span></li>
+                    {% endif %}
+
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+
+    </body>
+</html>
