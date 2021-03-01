@@ -1,7 +1,7 @@
 # geo_api
 Test API with Django and Django Rest frameworks
 
-Bonjour l'équipe Ascanio
+Bonjour l'équipe,
 
 Voici quelques explications sur mon rendu pour l'API de test avec Django
 
